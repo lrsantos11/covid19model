@@ -47,3 +47,20 @@ error = function(e) {
   stop(sprintf("Error downloading file '%s': %s, please check %s",
                url, e$message, url_page))
 })
+
+# Download Brazil data
+url <- "https://raw.githubusercontent.com/covid19br/covid19br.github.io/master/dados/EstadosCov19.csv"
+url_page <- "https://covid19br.github.io"
+tryCatch({
+  r <- RETRY("GET", url,
+             write_disk("Brazil/data/brazil-deaths.csv", overwrite=TRUE))
+
+   if (http_error(r)) {
+    stop("Error downloading file")
+  }
+},
+error = function(e) {
+  stop(sprintf("Error downloading file '%s': %s, please check %s",
+               url, e$message, url_page))
+})
+
