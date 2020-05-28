@@ -18,6 +18,7 @@ library(bayesplot)
 library(cowplot)
 library(optparse)
 
+source("data/fetch-data.r")
 source("Brazil/code/preprocessing-subnation-brazil.r")
 
 # Commandline options and parsing
@@ -29,7 +30,7 @@ parser <- add_option(parser, c("-F", "--full"), action="store_true",
 cmdoptions <- parse_args(parser, args = commandArgs(trailingOnly = TRUE), positional_arguments = TRUE)
 
 # Default run parameters for the model
-Sys.setenv(DEBUG = "TRUE") # to run  in debug mode
+# Sys.setenv(DEBUG = "TRUE") # to run  in debug mode
 if(is.null(cmdoptions$options$debug)) {
   DEBUG = Sys.getenv("DEBUG") == "TRUE"
 } else {
