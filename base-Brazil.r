@@ -101,7 +101,7 @@ JOBID = Sys.getenv("PBS_JOBID")
 if(JOBID == "")
   JOBID = as.character(abs(round(rnorm(1) * 1000000)))
 print(sprintf("Jobid = %s",JOBID))
-filename <- paste0(StanModel,'-',Sys.Date())
+filename <- paste0(StanModel,'-',JOBID)
 save(fit, dates, reported_cases,deaths_by_country, countries,
      prediction, estimated.deaths,stan_data,JOBID,df_pop,filename,df_region_codes,
      file=paste0('Brazil/results/',StanModel,'-',JOBID,'-stanfit.Rdata'))
