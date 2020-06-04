@@ -197,7 +197,7 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
   #save_plot(filename = paste0("Brazil/figures/", country, "_three_pannel_", filename2, ".png"), p, base_width = 14)
   #ggsave(ptmp, file=paste0("Brazil/figures/", country, "_three_pannel_", JOBID,'-',filename2, ".png"), width = 14)
   ggsave(ptmp,
-         file=paste0("Brazil/figures/",country,"-three-pannel-", filename, ".png"), width = 14, height = 5)
+         file=paste0("Brazil/figures/",country,"-three-pannel-", filename, ".png"), width = 12, height = 6,type = "cairo")
   
 }
 
