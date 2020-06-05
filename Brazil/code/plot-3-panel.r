@@ -167,6 +167,11 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
     geom_ribbon(data = data_rt, aes(x = time, ymin = rt_min, ymax = rt_max,
                                     group = key,
                                     fill = key)) +
+   geom_label(x = tail(data_rt_95$date,1),
+             y=tail(data_rt_95$rt_min,1),label=tail(data_rt_95$rt_min,1),
+              label.padding = unit(0.15, "lines"),
+              # Rectangle size around label
+              label.size = 0.15, color = "red", vjust = -0.5, alpha = 0.5) +
     geom_hline(yintercept = 1, color = 'black', size = 0.1) +
     geom_segment(data = covariates_country_long,
                  aes(x = value, y = 0, xend = value, yend = max(x)),
@@ -189,8 +194,7 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
     scale_y_continuous(expand = expansion(mult=c(0,0.1))) +
     theme_pubr() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    theme(legend.position="right")
-  
+    theme(legend.position="right") 
   
   ptmp <- plot_grid(p1, p2, p3, ncol = 3, rel_widths = c(0.75, 0.75, 1))
   #print(ptmp)
