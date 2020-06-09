@@ -197,7 +197,7 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
     theme_pubr() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(legend.position="right") + 
-    theme(panel.grid.major.y = element_line())
+    theme(panel.grid.major.y = element_line(colour = "black"))
   
 #  ptmp <- plot_grid(p1, p2, p3, ncol = 3, rel_widths = c(0.75, 0.75, 1))
   ptmp2 <- plot_grid(p1, p2, ncol = 2, rel_widths = c(0.75, 0.75))
