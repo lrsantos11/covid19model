@@ -167,8 +167,8 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
   
   plot_labels <- c("Emergency","Retail and Service","School Closing","Transport")
   dateposition  <- as.Date("2020-04-27")
-  rt95range <- paste0("95% ([" ,round(tail(data_rt_95$rt_min,1),3), "," ,round(tail(data_rt_95$rt_max    ,1),3),"] in ",format(tail(data_rt$time,1),"%e %b"),")")
-  rt50range <- paste0("50% ([" ,round(tail(data_rt_50$rt_min,1),3), "," ,round(tail(data_rt_50$rt_max        ,1),3),"] in ",format(tail(data_rt$time,1),"%e %b"),")")
+  rt95range <- paste0("95% ([" ,signif(tail(data_rt_95$rt_min,1),2), "," ,signif(tail(data_rt_95$rt_max    ,1),2),"] in ",format(tail(data_rt$time,1),"%e %b"),")")
+  rt50range <- paste0("50% ([" ,signif(tail(data_rt_50$rt_min,1),2), "," ,signif(tail(data_rt_50$rt_max        ,1),2),"] in ",format(tail(data_rt$time,1),"%e %b"),")")
   p3 <- ggplot(data_country) +
     geom_ribbon(data = data_rt, aes(x = time, ymin = rt_min, ymax = rt_max,
                                     group = key,
