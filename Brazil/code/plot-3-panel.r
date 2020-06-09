@@ -11,7 +11,9 @@ make_data_plot <- function(filename){
     print(i)
     N <- length(dates[[i]])
     country <- countries[[i]]
-    
+   if(country != "SC"){
+	  next
+   } 
     predicted_cases <- colMeans(prediction[,1:N,i])
     predicted_cases_li <- colQuantiles(prediction[,1:N,i], probs=.025)
     predicted_cases_ui <- colQuantiles(prediction[,1:N,i], probs=.975)
@@ -82,6 +84,7 @@ make_data_plot <- function(filename){
   make_table(table_paper)
 }
 make_plots <-  function(data_country, data_cases, country, filename, interventions){
+  statename  <- df_region_codes[which(df_region_codes[,1]==country),2] 		
   p1 <- ggplot(data_country) +
     geom_bar(data = data_country, aes(x = time, y = reported_cases),
              fill = "coral4", stat='identity', alpha=0.5) +
@@ -96,7 +99,8 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
                                  alpha("deepskyblue4", 0.45))) +
     theme_pubr() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "None") + ggtitle(df_region_codes[which(df_region_codes[,1]==country),2]) +
+          legend.position = "None") + 
+    ggtitle(statename)+
     guides(fill=guide_legend(ncol=1))
   
   data_deaths_95 <- data.frame(data_country$time, data_country$death_min,
@@ -162,16 +166,13 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
                                          length(covariates_country_long$value))
   
   plot_labels <- c("Emergency","Retail and Service","School Closing","Transport")
-  
+  dateposition  <- as.Date("2020-04-27")
+  rt95range <- paste0("95% ([" ,round(tail(data_rt_95$rt_min,1),3), "," ,round(tail(data_rt_95$rt_max    ,1),3),"] in ",format(tail(data_rt$time,1),"%e %b"),")")
+  rt50range <- paste0("50% ([" ,round(tail(data_rt_50$rt_min,1),3), "," ,round(tail(data_rt_50$rt_max        ,1),3),"] in ",format(tail(data_rt$time,1),"%e %b"),")")
   p3 <- ggplot(data_country) +
     geom_ribbon(data = data_rt, aes(x = time, ymin = rt_min, ymax = rt_max,
                                     group = key,
                                     fill = key)) +
-   geom_label(x = tail(data_rt_95$date,1),
-             y=tail(data_rt_95$rt_min,1),label=tail(data_rt_95$rt_min,1),
-              label.padding = unit(0.15, "lines"),
-              # Rectangle size around label
-              label.size = 0.15, color = "red", vjust = -0.5, alpha = 0.5) +
     geom_hline(yintercept = 1, color = 'black', size = 0.1) +
     geom_segment(data = covariates_country_long,
                  aes(x = value, y = 0, xend = value, yend = max(x)),
@@ -183,7 +184,7 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
                                                    col = key), size = 2) +
     xlab("") +
     ylab(expression(R[t])) +
-    scale_fill_manual(name = "", labels = c("50%", "95%"),
+    scale_fill_manual(name = "", labels = c(rt50range, rt95range),
                       values = c(alpha("seagreen", 0.75), alpha("seagreen", 0.5))) +
     scale_shape_manual(name = "Interventions", labels = plot_labels,
                        values = c(21, 22, 23, 24, 25, 12)) +
@@ -192,17 +193,19 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
                  limits = c(data_country$time[1],
                             data_country$time[length(data_country$time)])) +
     scale_y_continuous(expand = expansion(mult=c(0,0.1))) +
+    ggtitle(paste0(statename," - R[t] estimation until",format(tail(data_rt$time,1),"%e %b")))+
     theme_pubr() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(legend.position="right") 
   
-  ptmp <- plot_grid(p1, p2, p3, ncol = 3, rel_widths = c(0.75, 0.75, 1))
+#  ptmp <- plot_grid(p1, p2, p3, ncol = 3, rel_widths = c(0.75, 0.75, 1))
+  ptmp2 <- plot_grid(p1, p2, ncol = 2, rel_widths = c(0.75, 0.75))
   #print(ptmp)
   #save_plot(filename = paste0("Brazil/figures/", country, "_three_pannel_", filename2, ".png"), p, base_width = 14)
   #ggsave(ptmp, file=paste0("Brazil/figures/", country, "_three_pannel_", JOBID,'-',filename2, ".png"), width = 14)
-  ggsave(ptmp,
-         file=paste0("Brazil/figures/",country,"-three-pannel-", filename, ".png"), width = 12, height = 6,type = "cairo")
-  
+  #ggsave(ptmp, file=paste0("Brazil/figures/",country,"-three-pannel-", filename, ".png"), width = 12, height = 6,type = "cairo")
+  ggsave(ptmp2,file=paste0("Brazil/figures/",country,"-two-pannel-", filename, ".png"), width = 12, height =     6,type = "cairo")
+  ggsave(p3,file=paste0("Brazil/figures/",country,"-R_t-", filename, ".png"), width = 12, height =     6,type = "cairo")
 }
 
 make_table <- function(table_paper){
