@@ -69,7 +69,7 @@ cat(sprintf("Running:\nStanModel = %s\nDebug: %s\n",
 forecast <- 7
 N2 <- (max(as.Date(df$DateRep, format="%Y-%m-%d")) - min(as.Date(df$DateRep, format="%Y-%m-%d")) + 1 + forecast)[[1]]
 # countries <- c("RJ","SP","PE","CE","AM","BA","ES","MA","MG","PR","PA","RN","RS","SC","AL","PB")
-countries <- c("SC")
+countries <- c("SC","RS")
 
 ####################################################################
 processed_data <- process_data(countries,N2,df)
