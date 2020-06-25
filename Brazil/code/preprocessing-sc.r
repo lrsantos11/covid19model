@@ -16,8 +16,7 @@ df_SC=bind_rows(zeroes,df_SC)
 
 
 df_pop<-read.csv(paste0(path,"/sc-population.csv"),sep=";")
-df_pop<-df_pop[c("RegionName","population")]
-colnames(df_pop)<-c("region", "population")
+df_pop<-df_pop[c("region","population")]
 # df_pop <- df_pop[1:(nrow(df_pop)-1),]
 df=merge(x = df_SC, y = df_pop, by = "region", all = TRUE)
 df=df[order(as.Date(df$DateRep, format="%Y-%m-%d")),]

@@ -1,5 +1,5 @@
 make_data_plot <- function(filename){
-  load(paste0('Brazil/results/',filename,'-stanfit.Rdata'))
+  # load(paste0('Brazil/results/',filename,'-stanfit.Rdata'))
   interventions <- read.csv2(paste0("Brazil/data/brazil-interventions.csv"), sep=";")
   interventions[,2] <- dmy(as.character(interventions[,2]))
   interventions[,3] <- dmy(as.character(interventions[,3]))
@@ -11,9 +11,9 @@ make_data_plot <- function(filename){
     print(i)
     N <- length(dates[[i]])
     country <- countries[[i]]
-   if(country != "SC"){
-	  next
-   } 
+   # if(country != "SC"){
+	  # next
+   # } 
     predicted_cases <- colMeans(prediction[,1:N,i])
     predicted_cases_li <- colQuantiles(prediction[,1:N,i], probs=.025)
     predicted_cases_ui <- colQuantiles(prediction[,1:N,i], probs=.975)
@@ -113,7 +113,6 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
   data_deaths_50$key <- rep("fifty", length(data_deaths_50$time))
   data_deaths <- rbind(data_deaths_95, data_deaths_50)
   levels(data_deaths$key) <- c("ninetyfive", "fifty")+ coord_fixed(ratio = 10)
-  
   p2 <-   ggplot(data_country, aes(x = time)) +
     geom_bar(data = data_country, aes(y = deaths, fill = "reported"),
              fill = "coral4", stat='identity', alpha=0.5) +
@@ -146,7 +145,7 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
   
   # interventions
   # # delete these 2 lines
-  covariates_country <- interventions[which(interventions$region == country),-1]
+  covariates_country <- interventions[which(interventions$region == "SC"),-1]
   covariates_country_long <- gather(covariates_country, key = "key",
                                     value = "value")
   covariates_country_long$x <- rep(NULL, length(covariates_country_long$key))
@@ -167,39 +166,48 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
   
   plot_labels <- c("Emergency","Retail and Service","School Closing","Transport")
   dateposition  <- as.Date("2020-04-27")
-  rt95range <- paste0("95% ([" ,signif(tail(data_rt_95$rt_min,1),2), "," ,signif(tail(data_rt_95$rt_max    ,1),2),"] in ",format(tail(data_rt$time,1),"%e %b"),")")
-  rt50range <- paste0("50% ([" ,signif(tail(data_rt_50$rt_min,1),2), "," ,signif(tail(data_rt_50$rt_max        ,1),2),"] in ",format(tail(data_rt$time,1),"%e %b"),")")
+  max_rt95 <- round(tail(data_rt_95$rt_max,1),2)
+  min_rt95 <- round(tail(data_rt_95$rt_min,1),2)
+  max_rt50 <- round(tail(data_rt_50$rt_max,1),2)
+  min_rt50 <- round(tail(data_rt_50$rt_min,1),2)
+  lastday <- as.Date(tail(data_country$time,1))
+  rt95range <- paste0("95% ([" ,min_rt95, "," ,max_rt95,"] in ",format(tail(data_rt$time,1),"%e %b"),")")
+  rt50range <- paste0("50% ([" ,min_rt50, "," ,max_rt95,"] in ",format(tail(data_rt$time,1),"%e %b"),")")
+
   p3 <- ggplot(data_country) +
     geom_ribbon(data = data_rt, aes(x = time, ymin = rt_min, ymax = rt_max,
                                     group = key,
                                     fill = key)) +
-    geom_hline(yintercept = 1, color = 'black', size = 0.1) +
-    geom_segment(data = covariates_country_long,
-                 aes(x = value, y = 0, xend = value, yend = max(x)),
-                 linetype = "dashed", colour = "grey", alpha = 0.75) +
-    geom_point(data = covariates_country_long, aes(x = value,
-                                                   y = x,
-                                                   group = key,
-                                                   shape = key,
-                                                   col = key), size = 2) +
+    geom_hline(yintercept = 1, color = 'red', size = .3) +
+    geom_hline(yintercept = c(min_rt95,max_rt95), color = 'black', size = 0.1,linetype = 'dashed' ) +
+    annotate("text",label=toString(min_rt95), x=lastday, y=min_rt95-.1) +
+    annotate("text",label=toString(max_rt95), x=lastday, y=max_rt95+.1) +
+    # geom_segment(data = covariates_country_long,
+    #              aes(x = value, y = 0, xend = value, yend = max(x)),
+    #              linetype = "dashed", colour = "grey", alpha = 0.75) +
+    # geom_point(data = covariates_country_long, aes(x = value,
+    #                                                y = x,
+    #                                                group = key,
+    #                                                shape = key,
+    #                                                col = key), size = 2) +
     xlab("") +
     ylab(expression(R[t])) +
     scale_fill_manual(name = "", labels = c(rt50range, rt95range),
                       values = c(alpha("seagreen", 0.75), alpha("seagreen", 0.5))) +
-    scale_shape_manual(name = "Interventions", labels = plot_labels,
-                       values = c(21, 22, 23, 24, 25, 12)) +
-    scale_colour_discrete(name = "Interventions", labels = plot_labels) +
+    # scale_shape_manual(name = "Interventions", labels = plot_labels,
+    #                    values = c(21, 22, 23, 24, 25, 12)) +
+    # scale_colour_discrete(name = "Interventions", labels = plot_labels) +
     scale_x_date(date_breaks = "weeks", labels = date_format("%e %b"),
                  limits = c(data_country$time[1],
                             data_country$time[length(data_country$time)])) +
-    scale_y_continuous(expand = expansion(mult=c(0,0.1))) +
-    ggtitle(paste0(statename," - R[t] estimation until",format(tail(data_rt$time,1),"%e %b")))+
+    scale_y_continuous(expand = expansion(mult=c(0,0.1)))+#, breaks = c(1,max_rt95,min_rt95)) +
+    ggtitle(paste0(statename," - Rt estimado até ",format(tail(data_rt$time,1),"%e %b")))+
     theme_pubr() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(legend.position="right") + 
     theme(panel.grid.major.y = element_line(colour = "grey"),
           panel.grid.minor.y = element_line(colour = "grey"))
-  
+
 #  ptmp <- plot_grid(p1, p2, p3, ncol = 3, rel_widths = c(0.75, 0.75, 1))
   ptmp2 <- plot_grid(p1, p2, ncol = 2, rel_widths = c(0.75, 0.75))
   #print(ptmp)

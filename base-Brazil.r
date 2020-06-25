@@ -32,7 +32,7 @@ parser <- add_option(parser, c("-F", "--full"), action="store_true",
 cmdoptions <- parse_args(parser, args = commandArgs(trailingOnly = TRUE), positional_arguments = TRUE)
 
 # Default run parameters for the model
-# Sys.setenv(DEBUG = "TRUE") # to run  in debug mode
+Sys.setenv(DEBUG = "TRUE") # to run  in debug mode
 if(is.null(cmdoptions$options$debug)) {
   DEBUG = Sys.getenv("DEBUG") == "TRUE"
 } else {
@@ -72,9 +72,9 @@ forecast <- 7
 N2 <- (max(as.Date(df$DateRep, format="%Y-%m-%d")) - min(as.Date(df$DateRep, format="%Y-%m-%d")) + 1 + forecast)[[1]]
 # countries <- c("RJ","SP","PE","CE","AM","BA","ES","MA","MG","PR","PA","RN","RS","SC","AL","PB")
 # countries <- c("SC","RS")
-countries=c("ALTO VALE DO ITAJAI", "FOZ DO RIO ITAJAI", "GRANDE FLORIANOPOLIS", "GRANDE OESTE", "MEIO OESTE E SERRA CATARINENSE", "PLANALTO NORTE E NORDESTE", "SC", "SUL")
+# countries=c("ALTO VALE DO ITAJAI", "FOZ DO RIO ITAJAI", "GRANDE FLORIANOPOLIS", "GRANDE OESTE", "MEIO OESTE E SERRA CATARINENSE", "PLANALTO NORTE E NORDESTE", "SC", "SUL")
 
-# countries <- c("AVI","FVI","GFL","GOE","MOS","PNN","SC","SUL")
+countries <- c("AVI","FVI","GFL","GOE","MOS","PNN","SC","SUL")
 
 ####################################################################
 processed_data <- process_data(countries,N2,df)
