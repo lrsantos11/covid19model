@@ -16,7 +16,8 @@ df_SC=bind_rows(zeroes,df_SC)
 
 
 df_pop<-read.csv(paste0(path,"/sc-population.csv"),sep=";")
-df_pop<-df_pop[c("region","population")]
+df_pop<-df_pop[c("RegionName","population")]
+colnames(df_pop)<-c("region", "population")
 # df_pop <- df_pop[1:(nrow(df_pop)-1),]
 df=merge(x = df_SC, y = df_pop, by = "region", all = TRUE)
 df=df[order(as.Date(df$DateRep, format="%Y-%m-%d")),]
@@ -29,7 +30,7 @@ mobility.aux2 = mobility.aux2[which(mobility.aux2$iso_3166_2_code=="BR-SC"),]
 mobility.aux2$iso_3166_2_code <- "SC"
 
 region=c("AVI","FVI","GFL","GOE","MOS","PNN","SC","SUL")
-county=c("Alto Vale Do Itajai", "Foz Do Rio Itajai", "Grande Florianopolis", "Grande Oeste", "Meio Oeste E Serra Catarinense", "Planalto Norte E Nordeste", "Estado de Santa Catarina", "Sul")
+county=c("ALTO VALE DO ITAJAI", "FOZ DO RIO ITAJAI", "GRANDE FLORIANOPOLIS", "GRANDE OESTE", "MEIO OESTE E SERRA CATARINENSE", "PLANALTO NORTE E NORDESTE", "ESTADO DE SANTA CATARINA", "SUL")
 df_region_codes = data.frame(region,county) # Please check these are right -- HHH checked
 mobility<-merge(x = mobility.aux2, y = df_region_codes, by.x = c("iso_3166_2_code"),by.y=c("region"), all.x = TRUE)
 
