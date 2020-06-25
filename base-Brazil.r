@@ -19,7 +19,9 @@ library(cowplot)
 library(optparse)
 
 source("data/fetch-data.r")
-source("Brazil/code/preprocessing-subnation-brazil.r")
+# source("Brazil/code/preprocessing-subnation-brazil.r")
+source("Brazil/code/preprocessing-sc.r")
+
 
 # Commandline options and parsing
 parser <- OptionParser()
@@ -69,7 +71,8 @@ cat(sprintf("Running:\nStanModel = %s\nDebug: %s\n",
 forecast <- 7
 N2 <- (max(as.Date(df$DateRep, format="%Y-%m-%d")) - min(as.Date(df$DateRep, format="%Y-%m-%d")) + 1 + forecast)[[1]]
 # countries <- c("RJ","SP","PE","CE","AM","BA","ES","MA","MG","PR","PA","RN","RS","SC","AL","PB")
-countries <- c("SC","RS")
+# countries <- c("SC","RS")
+countries <- c("AVI","FVI","GFL","GOE","MOS","PNN","SC","SUL")
 
 ####################################################################
 processed_data <- process_data(countries,N2,df)
