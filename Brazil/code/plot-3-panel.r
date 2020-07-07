@@ -85,6 +85,9 @@ make_data_plot <- function(filename){
 }
 make_plots <-  function(data_country, data_cases, country, filename, interventions){
   statename  <- df_region_codes[which(df_region_codes[,1]==country),2] 		
+ # Consider data until 7days ago
+data_country <- head(data_country,-7)
+data_cases <- head(data_cases,-7)
   p1 <- ggplot(data_country) +
     geom_bar(data = data_country, aes(x = time, y = reported_cases),
              fill = "coral4", stat='identity', alpha=0.5) +
@@ -132,6 +135,7 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
     guides(fill=guide_legend(ncol=1))
   
   # Plotting interventions
+  window <- -7
   data_rt_95 <- data.frame(data_country$time,
                            data_country$rt_min, data_country$rt_max)
   names(data_rt_95) <- c("time", "rt_min", "rt_max")
@@ -142,7 +146,7 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
   data_rt_50$key <- rep("fifty", length(data_rt_50$time))
   data_rt <- rbind(data_rt_95, data_rt_50)
   levels(data_rt$key) <- c("ninetyfive", "fifth")
-  
+  data_rt <- head(data_rt,window)
   # interventions
   # # delete these 2 lines
   covariates_country <- interventions[which(interventions$region == "SC"),-1]
