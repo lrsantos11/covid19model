@@ -202,7 +202,7 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
                  limits = c(data_country$time[1],
                             data_country$time[length(data_country$time)])) +
     scale_y_continuous(expand = expansion(mult=c(0,0.1)))+#, breaks = c(1,max_rt95,min_rt95)) +
-    ggtitle(paste0(statename," - Rt estimado até",format(lastday,"%e %b")," (com dados até",format(lastday+10,"%e %b"),")"))+    
+    ggtitle(paste0(statename," - Rt estimado até ",format(tail(data_rt$time,1),"%e %b")))+    
     theme_pubr() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(legend.position="right") + 
