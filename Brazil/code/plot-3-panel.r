@@ -61,6 +61,8 @@ make_data_plot <- function(filename){
                                "rt_min2" = rt_li2,
                                "rt_max2" = rt_ui2)
     
+    window <- -7
+    data_country  <- head(data_country,window) 
     aux = data_country[,c("reported_cases","predicted_cases","predicted_min2","predicted_max2","deaths","death_min2","death_max2")]
     aux2 = data.frame(as.character(country),
                       tail(apply(aux, 2, cumsum),1),
@@ -71,10 +73,12 @@ make_data_plot <- function(filename){
                                 data_country$predicted_max)
     names(data_cases_95) <- c("time", "cases_min", "cases_max")
     data_cases_95$key <- rep("nintyfive", length(data_cases_95$time))
+    data_cases_95  <- head(data_cases_95,window)
     data_cases_50 <- data.frame(data_country$time, data_country$predicted_min2,
                                 data_country$predicted_max2)
     names(data_cases_50) <- c("time", "cases_min", "cases_max")
     data_cases_50$key <- rep("fifty", length(data_cases_50$time))
+    data_cases_50  <- head(data_cases_50,window)
     data_cases <- rbind(data_cases_95, data_cases_50)
     levels(data_cases$key) <- c("ninetyfive", "fifty")
     make_plots(data_country, data_cases, country,filename, interventions)
@@ -86,8 +90,6 @@ make_data_plot <- function(filename){
 make_plots <-  function(data_country, data_cases, country, filename, interventions){
   statename  <- df_region_codes[which(df_region_codes[,1]==country),2] 		
  # Consider data until 7days ago
-data_country <- head(data_country,-7)
-data_cases <- head(data_cases,-7)
   p1 <- ggplot(data_country) +
     geom_bar(data = data_country, aes(x = time, y = reported_cases),
              fill = "coral4", stat='identity', alpha=0.5) +
@@ -135,7 +137,6 @@ data_cases <- head(data_cases,-7)
     guides(fill=guide_legend(ncol=1))
   
   # Plotting interventions
-  window <- -7
   data_rt_95 <- data.frame(data_country$time,
                            data_country$rt_min, data_country$rt_max)
   names(data_rt_95) <- c("time", "rt_min", "rt_max")
