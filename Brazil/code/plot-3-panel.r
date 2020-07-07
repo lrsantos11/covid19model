@@ -60,9 +60,8 @@ make_data_plot <- function(filename){
                                "rt_max" = rt_ui,
                                "rt_min2" = rt_li2,
                                "rt_max2" = rt_ui2)
+    data_country  <- head(data_country,-7)  
     aux = data_country[,c("reported_cases","predicted_cases","predicted_min2","predicted_max2","deaths","death_min2","death_max2")]
-  data_country  <- head(data_country,-7)  
-  aux = data_country[,c("reported_cases","predicted_cases","predicted_min2","predicted_max2","deaths","death_min2","death_max2")]
     aux2 = data.frame(as.character(country),
                       tail(apply(aux, 2, cumsum),1),
                       (df_pop[which(df_pop$region==country),2])
@@ -203,7 +202,7 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
                  limits = c(data_country$time[1],
                             data_country$time[length(data_country$time)])) +
     scale_y_continuous(expand = expansion(mult=c(0,0.1)))+#, breaks = c(1,max_rt95,min_rt95)) +
-    ggtitle(paste0(statename," - Rt estimado até ",format(tail(data_rt$time,1),"%e %b")," (com dados atualizados até",format(today()-1,"%e %b"),")"))+
+    ggtitle(paste0(statename," - Rt estimado até",format(lastday,1),"%e %b"), " (com dados até",format(lastday+10,1),"%e %b")))+    
     theme_pubr() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(legend.position="right") + 
