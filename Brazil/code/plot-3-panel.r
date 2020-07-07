@@ -60,10 +60,9 @@ make_data_plot <- function(filename){
                                "rt_max" = rt_ui,
                                "rt_min2" = rt_li2,
                                "rt_max2" = rt_ui2)
-    
-    window <- -7
-    data_country  <- head(data_country,window) 
     aux = data_country[,c("reported_cases","predicted_cases","predicted_min2","predicted_max2","deaths","death_min2","death_max2")]
+  data_country  <- head(data_country,-7)  
+  aux = data_country[,c("reported_cases","predicted_cases","predicted_min2","predicted_max2","deaths","death_min2","death_max2")]
     aux2 = data.frame(as.character(country),
                       tail(apply(aux, 2, cumsum),1),
                       (df_pop[which(df_pop$region==country),2])
@@ -89,14 +88,13 @@ make_data_plot <- function(filename){
 }
 make_plots <-  function(data_country, data_cases, country, filename, interventions){
   statename  <- df_region_codes[which(df_region_codes[,1]==country),2] 		
- # Consider data until 7days ago
   p1 <- ggplot(data_country) +
     geom_bar(data = data_country, aes(x = time, y = reported_cases),
              fill = "coral4", stat='identity', alpha=0.5) +
     geom_ribbon(data = data_cases,
                 aes(x = time, ymin = cases_min, ymax = cases_max, fill = key)) +
     xlab("") +
-    ylab("Daily number of infections\n") +
+    ylab("Número diário de infecções\n") +
     scale_x_date(date_breaks = "2 weeks", labels = date_format("%e %b")) +
     scale_y_continuous(expand = c(0, 0), labels = comma) +
     scale_fill_manual(name = "", labels = c("50%", "95%"),
@@ -129,7 +127,7 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
     scale_fill_manual(name = "", labels = c("50%", "95%"),
                       values = c(alpha("deepskyblue4", 0.55),
                                  alpha("deepskyblue4", 0.45))) +
-    ylab("Daily number of deaths\n") +
+    ylab("Número diário de mortes\n") +
     xlab("") +
     theme_pubr() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
@@ -147,7 +145,6 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
   data_rt_50$key <- rep("fifty", length(data_rt_50$time))
   data_rt <- rbind(data_rt_95, data_rt_50)
   levels(data_rt$key) <- c("ninetyfive", "fifth")
-  data_rt <- head(data_rt,window)
   # interventions
   # # delete these 2 lines
   covariates_country <- interventions[which(interventions$region == "SC"),-1]
@@ -206,7 +203,7 @@ make_plots <-  function(data_country, data_cases, country, filename, interventio
                  limits = c(data_country$time[1],
                             data_country$time[length(data_country$time)])) +
     scale_y_continuous(expand = expansion(mult=c(0,0.1)))+#, breaks = c(1,max_rt95,min_rt95)) +
-    ggtitle(paste0(statename," - Rt estimado até ",format(tail(data_rt$time,1),"%e %b")))+
+    ggtitle(paste0(statename," - Rt estimado até ",format(tail(data_rt$time,1),"%e %b")," (com dados atualizados até ",format(today(),"%e %b"),")"))+
     theme_pubr() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     theme(legend.position="right") + 
